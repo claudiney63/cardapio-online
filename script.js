@@ -13,32 +13,111 @@ let cart = [];
 
 // Abre e fecha o modal do carrinho
 cartBtn.addEventListener("click", () => {
-    cartModal.style.display = "flex";
+  cartModal.style.display = "flex";
 });
 
 cartModal.addEventListener("click", (e) => {
-    if (e.target === cartModal) {
-        cartModal.style.display = "none";
-    }
+  if (e.target === cartModal) {
+    cartModal.style.display = "none";
+  }
 });
 
 closeBtn.addEventListener("click", () => {
-    cartModal.style = "hidden";
+  cartModal.style = "hidden";
 });
 
 menu.addEventListener("click", (e) => {
-    let parentButton = e.target.closest(".add-to-cart-btn");
-    if(parentButton) {
-        const name = parentButton.getAttribute("data-name");
-        const price = parseFloat(parentButton.getAttribute("data-price"));
+  let parentButton = e.target.closest(".add-to-cart-btn");
+  if (parentButton) {
+    const name = parentButton.getAttribute("data-name");
+    const price = parseFloat(parentButton.getAttribute("data-price"));
 
-        //Adiciona o item ao carrinho
-        addItemToCart(name, price);
-    }
+    //Adiciona o item ao carrinho
+    addItemToCart(name, price);
+  }
 });
 
 // Função para adicionar um item ao carrinho
 
 function addItemToCart(name, price) {
-    alert("Adicionando: " + name + " ao carrinho por " + price);
+  // Verifica se o item já está no carrinho
+  const existingItem = cart.find((item) => item.name === name);
+
+  if (existingItem) {
+    existingItem.quanty += 1;
+  } else {
+    cart.push({ name, price, quanty: 1 });
+  }
+
+  updateCartModal();
 }
+
+// Função para renderizar os itens no carrinho
+function updateCartModal() {
+  cartItemsContainer.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((item) => {
+    const itemTotal = item.price * item.quanty;
+    total += itemTotal;
+
+    cartItemsContainer.innerHTML += `
+        <div class="flex items-center justify-between py-3">
+            <div>
+                <p class="font-bold">${item.name}</p>
+                <p class="">(Qtd: ${item.quanty})</p>
+                <p class="font-medium mt-2">R$ ${item.price.toFixed(2)}</p>
+            </div>
+            <div>
+                <button class="remove-from-cart" data-name="${item.name}">Remover</button>
+            </div>
+        </div>
+        `;
+  });
+
+  cartTotal.innerHTML = `${total.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  })}`;
+  cartCount.innerHTML = cart.length;
+}
+
+//remove item do carrinho
+cartItemsContainer.addEventListener("click", (e) => {
+
+    // Analisa se o botão clicado é o de remover e pega o nome do item
+    if (e.target.classList.contains("remove-from-cart")) {
+        const name = e.target.getAttribute("data-name")
+        
+        removeCartItem(name)
+    }
+})
+
+function removeCartItem(name) {
+
+    // Encontra o item no carrinho pelo nome
+    const index =  cart.findIndex(item => item.name === name)
+
+    // Se o item existir, remove ele do carrinho se a quantidade for maior que 1
+    //senão remove o item do carrinho
+    if(index !== -1) {
+        const item = cart[index]
+        if(item.quanty > 1) {
+            item.quanty--
+        } else {
+            cart.splice(index, 1)
+        }
+    }
+
+    updateCartModal()
+}
+
+adressInput.addEventListener("input", (e) => {
+    let inputValue = e.target.value
+
+    if(inputValue.length < 10) {
+        adressWarn.classList.remove("hidden")
+    } else {
+        adressWarn.classList.add("hidden")
+    }
+})
