@@ -36,7 +36,7 @@ menu.addEventListener("click", (e) => {
 
     //Adiciona o item ao carrinho
     addItemToCart(name, price);
-    alertToastify("Item adicionado ao carrinho!", "green")
+    alertToastify("Item adicionado ao carrinho!", "green");
   }
 });
 
@@ -93,7 +93,7 @@ cartItemsContainer.addEventListener("click", (e) => {
   if (e.target.classList.contains("remove-from-cart")) {
     const name = e.target.getAttribute("data-name");
 
-    alertToastify("Item removido do carrinho!", "blue")
+    alertToastify("Item removido do carrinho!", "blue");
     removeCartItem(name);
   }
 });
@@ -131,14 +131,17 @@ adressInput.addEventListener("input", (e) => {
 checkoutBtn.addEventListener("click", () => {
   const isOpen = checkOpen();
 
-  if(!isOpen) {
-      alertToastify("Desculpe, o restaurante está fechado no momento!", "red")
-      cartModal.style.display = "none"
-      return
+  if (!isOpen) {
+    alertToastify("Desculpe, o restaurante está fechado no momento!", "red");
+    cartModal.style.display = "none";
+    return;
   }
 
   if (cart.length === 0) {
-    alertToastify("Adicione itens ao carrinho antes de finalizar a compra!", "red")
+    alertToastify(
+      "Adicione itens ao carrinho antes de finalizar a compra!",
+      "red"
+    );
     return;
   }
 
@@ -160,7 +163,7 @@ checkoutBtn.addEventListener("click", () => {
     })
     .join("\n");
 
-    alertToastify("Pedido enviado com sucesso!", "green")
+  alertToastify("Pedido enviado com sucesso!", "green");
 
   const message = encodeURIComponent(
     `Olá, gostaria de fazer o pedido:\n${cartItems}\n\nTotal: ${cartTotal.textContent}\n\nEndereço para entrega: ${adressInput.value}`
@@ -194,15 +197,15 @@ if (isOpen) {
 }
 
 function alertToastify(message, color) {
-    Toastify({
-        text: message,
-        duration: 3000,
-        close: true,
-        gravity: "top", // `top` or `bottom`
-        position: "left", // `left`, `center` or `right`
-        stopOnFocus: true, // Prevents dismissing of toast on hover
-        style: {
-          background: color,
-        },
-      }).showToast();
+  Toastify({
+    text: message,
+    duration: 3000,
+    close: true,
+    gravity: "top", // `top` or `bottom`
+    position: "left", // `left`, `center` or `right`
+    stopOnFocus: true, // Prevents dismissing of toast on hover
+    style: {
+      background: color,
+    },
+  }).showToast();
 }
