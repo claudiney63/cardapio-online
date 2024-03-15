@@ -93,6 +93,7 @@ cartItemsContainer.addEventListener("click", (e) => {
   if (e.target.classList.contains("remove-from-cart")) {
     const name = e.target.getAttribute("data-name");
 
+    alertToastify("Item removido do carrinho!", "blue")
     removeCartItem(name);
   }
 });
