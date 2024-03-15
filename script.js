@@ -8,6 +8,8 @@ const closeBtn = document.getElementById("closer-modal-btn");
 const cartCount = document.getElementById("cart-count");
 const adressInput = document.getElementById("adress");
 const adressWarn = document.getElementById("adress-warn");
+const dateSpan = document.getElementById("date-span");
+const phone = "86995164003";
 
 let cart = [];
 
@@ -69,7 +71,9 @@ function updateCartModal() {
                 <p class="font-medium mt-2">R$ ${item.price.toFixed(2)}</p>
             </div>
             <div>
-                <button class="remove-from-cart" data-name="${item.name}">Remover</button>
+                <button class="remove-from-cart" data-name="${
+                  item.name
+                }">Remover</button>
             </div>
         </div>
         `;
@@ -84,40 +88,101 @@ function updateCartModal() {
 
 //remove item do carrinho
 cartItemsContainer.addEventListener("click", (e) => {
+  // Analisa se o botão clicado é o de remover e pega o nome do item
+  if (e.target.classList.contains("remove-from-cart")) {
+    const name = e.target.getAttribute("data-name");
 
-    // Analisa se o botão clicado é o de remover e pega o nome do item
-    if (e.target.classList.contains("remove-from-cart")) {
-        const name = e.target.getAttribute("data-name")
-        
-        removeCartItem(name)
-    }
-})
+    removeCartItem(name);
+  }
+});
 
 function removeCartItem(name) {
+  // Encontra o item no carrinho pelo nome
+  const index = cart.findIndex((item) => item.name === name);
 
-    // Encontra o item no carrinho pelo nome
-    const index =  cart.findIndex(item => item.name === name)
-
-    // Se o item existir, remove ele do carrinho se a quantidade for maior que 1
-    //senão remove o item do carrinho
-    if(index !== -1) {
-        const item = cart[index]
-        if(item.quanty > 1) {
-            item.quanty--
-        } else {
-            cart.splice(index, 1)
-        }
+  // Se o item existir, remove ele do carrinho se a quantidade for maior que 1
+  //senão remove o item do carrinho
+  if (index !== -1) {
+    const item = cart[index];
+    if (item.quanty > 1) {
+      item.quanty--;
+    } else {
+      cart.splice(index, 1);
     }
+  }
 
-    updateCartModal()
+  updateCartModal();
 }
 
+// Validação do campo de endereço
 adressInput.addEventListener("input", (e) => {
-    let inputValue = e.target.value
+  let inputValue = e.target.value;
 
-    if(inputValue.length < 10) {
-        adressWarn.classList.remove("hidden")
-    } else {
-        adressWarn.classList.add("hidden")
-    }
-})
+  if (inputValue.length < 10) {
+    adressWarn.classList.remove("hidden");
+  } else {
+    adressWarn.classList.add("hidden");
+  }
+});
+
+// Função para finalizar a compra
+checkoutBtn.addEventListener("click", () => {
+  const isOpen = checkOpen();
+
+  // if(!isOpen) {
+  //     alert("Desculpe, o restaurante está fechado no momento!")
+  //     cartModal.style.display = "none"
+  //     return
+  // }
+
+  if (cart.length === 0) {
+    alert("Adicione itens ao carrinho para finalizar a compra!");
+    return;
+  }
+
+  if (adressInput.value.length < 10) {
+    adressWarn.classList.remove("hidden");
+    adressInput.classList.add("border-red-500");
+    return;
+  }
+
+  // Simula o envio do pedido
+  const cartItems = cart
+    .map((item) => {
+      return `${item.name} - Quantidade: ${
+        item.quanty
+      } - R$ ${item.price.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      })}`;
+    })
+    .join("\n");
+
+  const message = encodeURIComponent(
+    `Olá, gostaria de fazer o pedido:\n${cartItems}\n\nTotal: ${cartTotal.textContent}\n\nEndereço para entrega: ${adressInput.value}`
+  );
+  
+  const url = `https://wa.me/${phone}?text=${message}`;
+
+  window.open(url, "_blank");
+
+  console.log(cartItems);
+});
+
+// Função para verificar se o restaurante está aberto
+function checkOpen() {
+  const data = new Date();
+  const hour = data.getHours();
+  return hour >= 18 && hour < 22;
+}
+
+const isOpen = checkOpen();
+
+// Muda a cor do span de acordo com o status do restaurante
+if (isOpen) {
+  dateSpan.classList.remove("bg-red-500");
+  dateSpan.classList.add("bg-green-600");
+} else {
+  dateSpan.classList.remove("bg-green-600");
+  dateSpan.classList.add("bg-red-500");
+}
