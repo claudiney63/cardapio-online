@@ -69,7 +69,7 @@ function updateCartModal() {
             <div>
                 <p class="font-bold">${item.name}</p>
                 <p class="">(Qtd: ${item.quanty})</p>
-                <p class="font-medium mt-2">R$ ${item.price.toFixed(2)}</p>
+                <p class="font-medium mt-2">R$ ${item.price.toFixed(2).replace(/\./g, ",")}</p>
             </div>
             <div>
                 <button class="remove-from-cart" data-name="${
