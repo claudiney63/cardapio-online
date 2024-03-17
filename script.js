@@ -209,3 +209,45 @@ function alertToastify(message, color) {
     },
   }).showToast();
 }
+
+fetch("https://sheetdb.io/api/v1/ci3ml4jasittp").then((response) => {
+  // Verifica se a resposta foi bem sucedida
+  if (!response.ok) {
+    throw new Error("Erro ao carregar os dados.");
+  }
+  // Parseia a resposta para JSON
+  return response.json();
+}).then((data) => {
+  var produtos = document.getElementById("produtos");
+
+  data.forEach((item) => {
+    produtos.innerHTML += `
+    <!-- Produto Item -->
+    <div class="flex gap-2">
+      <img
+        src="./assets/${item.foto}"
+        alt="${item.nome}"
+        class="w-28 h--28 rounded-md hover:scale-110 hover:-rotate-2 duration-300"
+      />
+
+      <div>
+        <h3 class="text-xl font-bold mt-2">Hamburguer Smash</h3>
+        <p class="text-sm">
+          ${item.descricao}
+        </p>
+
+        <div class="flex items-center gap-2 justify-between mt-3">
+          <p class="font-bold text-lg">R$ ${item.preco.replace(/\./g, ",")}</p>
+          <button
+            class="bg-gray-500 px-5 rounded add-to-cart-btn"
+            data-name="${item.nome}"
+            data-price="${item.preco}"
+          >
+            <i class="fa fa-cart-plus text-lg text-white"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Fim Produto Item -->
+    `})
+})
